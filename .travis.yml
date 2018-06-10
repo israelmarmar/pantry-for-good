@@ -5,9 +5,14 @@ node_js:
 services:
   - mongodb
   - docker
-on_success:
-  - chmod a+x build-docker.sh
-  - [[ ! -z "$TRAVIS_TAG" ]] && ./build-docker.sh
+after_success:
+  - if [ -z "$TRAVIS_TAG" ]; then exit 0; fi
+  - export REPO=painejs/pantry-for-good
+  - docker login -e $QUAYIO_EMAIL -u $QUAYIO_USERNAME -p $QUAYIO_PASSWORD
+  - docker build -t $REPO
+  - docker tag $REPO $REPO:latest
+  - docker tag $REPO $REPO:$TRAVIS_TAG
+  - docker push $REPO
 env:
   global:
     - secure: rOeXlL+QVQELySiBji9D0rivzxId/GvxgQjzTC4+9Aj2jDxHBjY3bAPXebdcpwQQjjfyvg+pSH8L8r9YrHvebqtZ2KYVqlycDj4paLL428wpfegPITnKyuigSyQH4cbRiN4g/qEdGk1dUd4l0sQwNcJOxhewuMfMw/6hklFUg2A3rVnmSLfHCmradC0/grVJQESQOwsxeCThFEcpUN4ZY8tHLT9pdtqjSuOKpFU1IuAiWpYtMc6pDk5rne7HZmb6MXi3STPDDnKFgxDGT1+bJijhVY8BuVU8XoWztTQNzzGzCJvSiWtKkZfdMszoC+wuqqY1ySBJ0RKADoHlM9iP/5R02601ZFQjBF+P13hw+j15pkbAoswiGgvk1TWQ+VB8P9hYAiJEH30hYyMPiczV9KDcWxuvsZiuqoqeqo8MhnN3RuH9ymAPoLDSjVfEn4Os3wnMSv9b/+1BVqDLfv3vI2tDD3r6bl61SgW4nG/ZoCkPFZwO2ZP9gB8YxevIOwzv0QaH4CLNFFYzHWHljEshdtYWhcgEzBLJ4yMPSIXe+ILedFV5BPSdEukVKp11IiL1FXAwBgfB1s6lEnvkR1jbAwXAvBJyFRVW5u4T4d8689bNRcfQpcuhEYpchMn0lM/1qakafDAwpD4jUT/qChkHYahIBslhBysTa6O1lnHfFe4= # QUAYIO_EMAIL
