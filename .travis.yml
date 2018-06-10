@@ -7,7 +7,7 @@ services:
   - docker
 after_success:
   - if [ -z "$TRAVIS_TAG" ]; then exit 0; fi
-  - export REPO=painejs/pantry-for-good
+  - export REPO=quay.io/painejs/pantry-for-good
   - docker login -e $QUAYIO_EMAIL -u $QUAYIO_USERNAME -p $QUAYIO_PASSWORD
   - docker build -t $REPO .
   - docker tag $REPO $REPO:latest
